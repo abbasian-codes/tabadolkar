@@ -14,7 +14,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const user = await prisma.Users.findUnique({ where: { email } })
+    const user = await prisma.User.findUnique({ where: { email } })
 
     if (!user) {
       return res.status(401).json({ error: "کاربری با این ایمیل یافت نشد" })

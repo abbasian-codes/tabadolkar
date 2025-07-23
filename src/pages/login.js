@@ -170,7 +170,8 @@ export default function LoginPage() {
 
     if (res.ok) {
       localStorage.setItem("token", data.token) // ✅ فقط در کلاینت اجرا میشه
-      window.location.href = "/dashboard1"
+      router.push("/dashboard") // 👈 همین‌جا
+      // window.location.href = "/dashboard1"
     } else {
       setError(data.error || "خطا در ورود")
     }
@@ -206,7 +207,14 @@ export default function LoginPage() {
           >
             ورود
           </button>
+          <Link href="/register">
+            <button className="w-full bg-green-600 text-white mt-3 py-2 rounded hover:bg-green-700">
+              سریع ثبت‌نام کن
+            </button>
+          </Link>
         </form>
+        {error && <p className="text-red-600">{error}</p>}
+        {success && <p className="text-green-600">{success}</p>}
       </div>
       <Footer />
     </>

@@ -5,7 +5,7 @@ export default async function handler(req, res) {
     // فرض کن userId را از کوکی یا توکن استخراج کردی
     const userId = 1 // نمونه (باید واقعی جایگزین شود)
 
-    const user = await prisma.users.findUnique({
+    const user = await prisma.user.findUnique({
       where: { id: userId },
       select: {
         id: true,

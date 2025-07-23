@@ -34,7 +34,7 @@ export default async function handler(req, res) {
     }
 
     try {
-      const existingUser = await prisma.users.findUnique({
+      const existingUser = await prisma.user.findUnique({
         where: { email },
       })
 
@@ -44,7 +44,7 @@ export default async function handler(req, res) {
 
       const hashedPassword = await bcrypt.hash(password, 10)
 
-      const newUser = await prisma.users.create({
+      const newUser = await prisma.user.create({
         data: {
           name,
           email,
