@@ -149,74 +149,84 @@
 //     </div>
 //   )
 // }
+// src/pages/login.js
 import { useState } from "react"
-import Footer from "@/components/Footer"
-import Header from "@/components/Header"
+import Link from "next/link"
+import { createClient } from "@supabase/supabase-js"
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+)
+
 export default function LoginPage() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [error, setError] = useState("")
 
-  const handleLogin = async (e) => {
-    e.preventDefault()
-
-    const res = await fetch("/api/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
+  async function signInWithGoogle() {
+    await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: { redirectTo: window.location.origin },
     })
+  }
 
-    const data = await res.json()
-
-    if (res.ok) {
-      localStorage.setItem("token", data.token) // ✅ فقط در کلاینت اجرا میشه
-      router.push("/dashboard") // 👈 همین‌جا
-      // window.location.href = "/dashboard1"
-    } else {
-      setError(data.error || "خطا در ورود")
-    }
+  async function handleLogin(e) {
+    e.preventDefault()
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    })
+    if (error) setError(error.message)
+    else window.location.href = "/dashboard"
   }
 
   return (
-    <>
-      <Header />
-      <div className="max-w-md mx-auto mt-40 mb-20">
-        <h1 className="text-2xl font-bold mb-4">ورود به حساب</h1>
-        {error && <p className="text-red-600">{error}</p>}
+    <div className="max-w-md mx-auto mt-40 p-4 space-y-4">
+      <h1 className="text-2xl font-bold">ورود به حساب</h1>
 
-        <form onSubmit={handleLogin} className="space-y-4">
-          <input
-            type="email"
-            placeholder="ایمیل"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full border p-2 rounded"
-            required
-          />
-          <input
-            type="password"
-            placeholder="رمز عبور"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full border p-2 rounded"
-            required
-          />
-          <button
-            type="submit"
-            className="w-full bg-blue-600 text-white p-2 rounded"
-          >
-            ورود
-          </button>
-          <Link href="/register">
-            <button className="w-full bg-green-600 text-white mt-3 py-2 rounded hover:bg-green-700">
-              سریع ثبت‌نام کن
-            </button>
-          </Link>
-        </form>
-        {error && <p className="text-red-600">{error}</p>}
-        {success && <p className="text-green-600">{success}</p>}
-      </div>
-      <Footer />
-    </>
+      {error && <p className="text-red-600">{error}</p>}
+
+      {/* دکمهٔ گوگل */}
+      <button
+        onClick={signInWithGoogle}
+        className="w-full bg-blue-600 text-white p-2 rounded"
+      >
+        ورود با گوگل
+      </button>
+
+      {/* فرم ایمیل و رمز */}
+      <form onSubmit={handleLogin} className="space-y-4">
+        <input
+          type="email"
+          placeholder="ایمیل"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className="w-full border p-2 rounded"
+          required
+        />
+        <input
+          type="password"
+          placeholder="رمز عبور"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          className="w-full border p-2 rounded"
+          required
+        />
+        <button
+          type="submit"
+          className="w-full bg-blue-600 text-white p-2 rounded"
+        >
+          ورود
+        </button>
+      </form>
+
+      <Link
+        href="/register"
+        className="w-full block text-center bg-green-600 text-white p-2 rounded"
+      >
+        ثبت‌نام
+      </Link>
+    </div>
   )
 }

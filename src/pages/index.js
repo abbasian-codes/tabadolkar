@@ -1,6 +1,6 @@
 import Header from "@/components/Header"
 import Hero from "@/components/Hero"
-
+import ServiceCTA from "@/components/ServiceCTA"
 import CardsSection from "@/components/CardSection"
 import TrustSection from "@/components/TrustSection"
 import Footer from "@/components/Footer"
@@ -17,7 +17,7 @@ export default function Home() {
       <Header />
 
       <Hero />
-
+      <ServiceCTA />
       <HeadersTam />
       <CardsSection />
       <TestimonialSlider />
