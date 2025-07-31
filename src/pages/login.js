@@ -165,20 +165,24 @@ export default function LoginPage() {
   const [error, setError] = useState("")
 
   async function signInWithGoogle() {
-    await supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: { redirectTo: window.location.origin },
-    })
+    if (typeof window !== "undefined") {
+      await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: { redirectTo: window.location.origin },
+      })
+    }
   }
 
   async function handleLogin(e) {
     e.preventDefault()
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    })
-    if (error) setError(error.message)
-    else window.location.href = "/dashboard"
+    if (typeof window !== "undefined") {
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      })
+      if (error) setError(error.message)
+      else window.location.href = "/dashboard"
+    }
   }
 
   return (

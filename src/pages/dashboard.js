@@ -9,7 +9,9 @@ export default function Dashboard() {
   useEffect(() => {
     const storedToken = localStorage.getItem("token")
     if (!storedToken) {
-      window.location.href = "/login"
+      if (typeof window !== "undefined") {
+        window.location.href = "/login"
+      }
     } else {
       setToken(storedToken)
     }
@@ -40,8 +42,10 @@ export default function Dashboard() {
   }, [token])
 
   const handleLogout = () => {
-    localStorage.removeItem("token")
-    window.location.href = "/login"
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("token")
+      window.location.href = "/login"
+    }
   }
 
   return (
@@ -98,3 +102,13 @@ export default function Dashboard() {
     </div>
   )
 }
+// import Layout from "../components/Layout"
+
+// export default function Dashboard() {
+//   return (
+//     <Layout>
+//       <h1 className="text-2xl font-bold">Dashboard</h1>
+//       <p>This is your dashboard.</p>
+//     </Layout>
+//   )
+// }

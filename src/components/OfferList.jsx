@@ -24,8 +24,11 @@ export default function OfferList({ onRequest }) {
             <p className="text-sm my-2">{offer.description}</p>
             <p className="text-sky-600 font-semibold">{offer.price} تومان</p>
             <button
-              onClick={() => onRequest(offer.id)}
-              className="text-xs underline mt-2"
+              onClick={() => {
+                console.log("offer.id =", offer.id)
+                onRequest(offer.id)
+              }}
+              className="text-xs underline mt-2 cursor-pointer hover:text-sky-800"
             >
               درخواست
             </button>
