@@ -100,49 +100,108 @@
 //     </>
 //   )
 // }
-import { useState } from "react"
-import { createClient } from "@supabase/supabase-js"
+// import { useState } from "react"
+// import supabase from "@/utils/supabase"
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-)
+// export default function Register() {
+//   const [email, setEmail] = useState("")
+//   const [password, setPassword] = useState("")
+
+//   // async function handleRegister(e) {
+//   //   e.preventDefault()
+//   //   const { data, error } = await supabase.auth.signUp({ email, password })
+//   //   if (error) alert(error.message)
+//   //   else alert("ثبت‌نام شد! ایمیل تأیید را چک کن.")
+//   // }
+//   // داخل Register / join component
+//   async function handleRegister(e) {
+//     e.preventDefault()
+
+//     const { data, error } = await supabase.auth.signUp({ email, password })
+
+//     if (error) {
+//       // خطای تکراری یا هر مشکل دیگر
+//       const msg =
+//         error.message.includes("already registered") ||
+//         error.message.includes("User already") ||
+//         error.message.includes("User with this email already exists")
+//           ? "این ایمیل قبلاً ثبت شده است."
+//           : error.message
+//       alert(msg)
+//     } else {
+//       alert("ثبت‌نام شد! ایمیل تأیید را چک کن.")
+//     }
+//   }
+
+//   return (
+//     <form
+//       onSubmit={handleRegister}
+//       className="max-w-sm mx-auto mt-20 space-y-4"
+//     >
+//       <input
+//         type="email"
+//         placeholder="ایمیل"
+//         value={email}
+//         onChange={(e) => setEmail(e.target.value)}
+//         className="w-full border p-2 rounded"
+//         required
+//       />
+//       <input
+//         type="password"
+//         placeholder="رمز عبور"
+//         value={password}
+//         onChange={(e) => setPassword(e.target.value)}
+//         className="w-full border p-2 rounded"
+//         required
+//       />
+//       <button className="w-full bg-blue-600 text-white p-2 rounded">
+//         ثبت‌نام
+//       </button>
+//     </form>
+//   )
+// }
+"use client"
+
+import { useState } from "react"
+import supabase from "@/utils/supabase"
 
 export default function Register() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const [loading, setLoading] = useState(false)
+  const [message, setMessage] = useState("")
 
-  // async function handleRegister(e) {
-  //   e.preventDefault()
-  //   const { data, error } = await supabase.auth.signUp({ email, password })
-  //   if (error) alert(error.message)
-  //   else alert("ثبت‌نام شد! ایمیل تأیید را چک کن.")
-  // }
-  // داخل Register / join component
   async function handleRegister(e) {
     e.preventDefault()
+    setLoading(true)
+    setMessage("")
 
     const { data, error } = await supabase.auth.signUp({ email, password })
 
     if (error) {
-      // خطای تکراری یا هر مشکل دیگر
       const msg =
         error.message.includes("already registered") ||
         error.message.includes("User already") ||
         error.message.includes("User with this email already exists")
           ? "این ایمیل قبلاً ثبت شده است."
-          : error.message
-      alert(msg)
+          : "خطا در ثبت‌نام: " + error.message
+      setMessage(msg)
     } else {
-      alert("ثبت‌نام شد! ایمیل تأیید را چک کن.")
+      setMessage(
+        "✅ ثبت‌نام با موفقیت انجام شد! لطفاً ایمیل خود را برای تأیید بررسی کنید."
+      )
     }
+
+    setLoading(false)
   }
 
   return (
     <form
       onSubmit={handleRegister}
-      className="max-w-sm mx-auto mt-20 space-y-4"
+      className="max-w-sm mx-auto mt-20 p-4 border rounded space-y-4"
     >
+      <h2 className="text-xl font-bold text-center">ثبت‌نام</h2>
+
       <input
         type="email"
         placeholder="ایمیل"
@@ -151,6 +210,7 @@ export default function Register() {
         className="w-full border p-2 rounded"
         required
       />
+
       <input
         type="password"
         placeholder="رمز عبور"
@@ -159,9 +219,20 @@ export default function Register() {
         className="w-full border p-2 rounded"
         required
       />
-      <button className="w-full bg-blue-600 text-white p-2 rounded">
-        ثبت‌نام
+
+      <button
+        type="submit"
+        disabled={loading}
+        className={`w-full text-white p-2 rounded ${
+          loading ? "bg-gray-400" : "bg-blue-600 hover:bg-blue-700"
+        }`}
+      >
+        {loading ? "در حال ثبت‌نام..." : "ثبت‌نام"}
       </button>
+
+      {message && (
+        <div className="text-sm text-center text-red-600 mt-2">{message}</div>
+      )}
     </form>
   )
 }
