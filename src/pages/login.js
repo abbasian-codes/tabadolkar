@@ -192,7 +192,7 @@ export default function LoginPage() {
   // اگر کاربر از قبل لاگین کرده، ریدایرکت به داشبورد
   useEffect(() => {
     const checkSession = async () => {
-      const { data, error } = await supabase.auth.getUser()
+      const { data } = await supabase.auth.getUser()
       if (data?.user) {
         router.push("/dashboard")
       } else {
@@ -200,9 +200,9 @@ export default function LoginPage() {
       }
     }
     checkSession()
-  }, [])
+  }, [router])
 
-  // هندل لاگین
+  // هندل لاگین با ایمیل و پسورد
   async function handleLogin(e) {
     e.preventDefault()
     setIsLoading(true)
@@ -226,17 +226,38 @@ export default function LoginPage() {
     }
   }
 
-  // در حال بررسی سشن: هیچ چیزی نمایش نده
+  // هندل لاگین با گوگل
+  async function signInWithGoogle() {
+    setError("")
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: window.location.origin, // پس از لاگین به صفحه اصلی برمیگرده
+      },
+    })
+    if (error) setError(error.message)
+  }
+
   if (checkingSession) return null
 
   return (
     <>
       <Header />
       <main className="min-h-screen flex items-center justify-center p-6 bg-gray-50">
-        <div className="max-w-md w-full bg-white p-8 rounded shadow">
-          <h1 className="text-2xl font-bold mb-6 text-center">ورود به حساب</h1>
+        <div className="max-w-md w-full bg-white p-8 rounded shadow space-y-6">
+          <h1 className="text-2xl font-bold text-center">ورود به حساب</h1>
 
-          {error && <p className="text-red-600 mb-4">{error}</p>}
+          {error && <p className="text-red-600 text-center">{error}</p>}
+
+          {/* دکمه ورود با گوگل */}
+          <button
+            onClick={signInWithGoogle}
+            className="w-full bg-red-600 hover:bg-red-700 transition text-white p-2 rounded"
+          >
+            ورود با گوگل
+          </button>
+
+          <div className="border-t border-gray-300"></div>
 
           <form onSubmit={handleLogin} className="space-y-4">
             <input

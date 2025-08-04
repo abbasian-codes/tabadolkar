@@ -161,78 +161,172 @@
 //   )
 // }
 "use client"
-
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { useRouter } from "next/router"
 import supabase from "@/utils/supabase"
+import Header from "@/components/Header"
+import Footer from "@/components/Footer"
 
-export default function Register() {
+export default function JoinPage() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
-  const [loading, setLoading] = useState(false)
-  const [message, setMessage] = useState("")
+  const [error, setError] = useState("") // ← اینجا error تعریف شده
+  const [isLoading, setIsLoading] = useState(false)
+  const router = useRouter()
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => {
+      if (data.user) router.push("/dashboard")
+    })
+  }, [router])
 
   async function handleRegister(e) {
     e.preventDefault()
-    setLoading(true)
-    setMessage("")
+    setIsLoading(true)
+    setError("")
 
-    const { data, error } = await supabase.auth.signUp({ email, password })
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+    })
 
-    if (error) {
-      const msg =
-        error.message.includes("already registered") ||
-        error.message.includes("User already") ||
-        error.message.includes("User with this email already exists")
-          ? "این ایمیل قبلاً ثبت شده است."
-          : "خطا در ثبت‌نام: " + error.message
-      setMessage(msg)
-    } else {
-      setMessage(
-        "✅ ثبت‌نام با موفقیت انجام شد! لطفاً ایمیل خود را برای تأیید بررسی کنید."
-      )
-    }
+    setIsLoading(false)
 
-    setLoading(false)
+    if (error) setError(error.message)
+    else router.push("/")
+  }
+
+  async function signInWithGoogle() {
+    await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: { redirectTo: window.location.origin },
+    })
   }
 
   return (
-    <form
-      onSubmit={handleRegister}
-      className="max-w-sm mx-auto mt-20 p-4 border rounded space-y-4"
-    >
-      <h2 className="text-xl font-bold text-center">ثبت‌نام</h2>
-
-      <input
-        type="email"
-        placeholder="ایمیل"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        className="w-full border p-2 rounded"
-        required
-      />
-
-      <input
-        type="password"
-        placeholder="رمز عبور"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        className="w-full border p-2 rounded"
-        required
-      />
-
-      <button
-        type="submit"
-        disabled={loading}
-        className={`w-full text-white p-2 rounded ${
-          loading ? "bg-gray-400" : "bg-blue-600 hover:bg-blue-700"
-        }`}
-      >
-        {loading ? "در حال ثبت‌نام..." : "ثبت‌نام"}
-      </button>
-
-      {message && (
-        <div className="text-sm text-center text-red-600 mt-2">{message}</div>
-      )}
-    </form>
+    <>
+      <Header />
+      <main className="min-h-screen flex items-center justify-center p-6 bg-gray-50">
+        <div className="max-w-md w-full bg-white p-8 rounded shadow space-y-4">
+          <h1 className="text-2xl font-bold text-center">ثبت‌نام</h1>
+          {error && <p className="text-red-600">{error}</p>}{" "}
+          {/* اینجا error به درستی تعریف شده */}
+          <button
+            onClick={signInWithGoogle}
+            className="w-full bg-red-600 text-white p-2 rounded hover:bg-red-700 transition"
+          >
+            ثبت‌نام با گوگل
+          </button>
+          <hr />
+          <form onSubmit={handleRegister} className="space-y-4">
+            <input
+              type="email"
+              placeholder="ایمیل"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full border border-gray-300 p-2 rounded"
+              required
+            />
+            <input
+              type="password"
+              placeholder="رمز عبور"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full border border-gray-300 p-2 rounded"
+              required
+            />
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700 transition"
+            >
+              {isLoading ? "در حال ثبت‌نام..." : "ثبت‌نام"}
+            </button>
+          </form>
+        </div>
+      </main>
+      <Footer />
+    </>
   )
 }
+
+// import { useState } from "react"
+// import supabase from "@/utils/supabase"
+
+// export default function Register() {
+//   const [email, setEmail] = useState("")
+//   const [password, setPassword] = useState("")
+//   const [loading, setLoading] = useState(false)
+//   const [message, setMessage] = useState("")
+
+//   async function handleRegister(e) {
+//     e.preventDefault()
+//     setLoading(true)
+//     setMessage("")
+
+//     const { data, error } = await supabase.auth.signUp({ email, password })
+
+//     if (error) {
+//       const msg =
+//         error.message.includes("already registered") ||
+//         error.message.includes("User already") ||
+//         error.message.includes("User with this email already exists")
+//           ? "این ایمیل قبلاً ثبت شده است."
+//           : "خطا در ثبت‌نام: " + error.message
+//       setMessage(msg)
+//     } else {
+//       setMessage(
+//         "✅ ثبت‌نام با موفقیت انجام شد! لطفاً ایمیل خود را برای تأیید بررسی کنید."
+//       )
+//     }
+
+//     setLoading(false)
+//   }
+//   async function signInWithGoogle() {
+//     await supabase.auth.signInWithOAuth({
+//       provider: "google",
+//       options: { redirectTo: window.location.origin },
+//     })
+//   }
+
+//   return (
+//     <form
+//       onSubmit={handleRegister}
+//       className="max-w-sm mx-auto mt-20 p-4 border rounded space-y-4"
+//     >
+//       <h2 className="text-xl font-bold text-center">ثبت‌نام</h2>
+
+//       <input
+//         type="email"
+//         placeholder="ایمیل"
+//         value={email}
+//         onChange={(e) => setEmail(e.target.value)}
+//         className="w-full border p-2 rounded"
+//         required
+//       />
+
+//       <input
+//         type="password"
+//         placeholder="رمز عبور"
+//         value={password}
+//         onChange={(e) => setPassword(e.target.value)}
+//         className="w-full border p-2 rounded"
+//         required
+//       />
+
+//       <button
+//         type="submit"
+//         disabled={loading}
+//         className={`w-full text-white p-2 rounded ${
+//           loading ? "bg-gray-400" : "bg-blue-600 hover:bg-blue-700"
+//         }`}
+//       >
+//         {loading ? "در حال ثبت‌نام..." : "ثبت‌نام"}
+//       </button>
+
+//       {message && (
+//         <div className="text-sm text-center text-red-600 mt-2">{message}</div>
+//       )}
+//     </form>
+//   )
+// }
