@@ -1,15 +1,15 @@
 import { useEffect, useState } from "react"
 
 export default function ServiceListSection() {
-  const [offers, setOffers] = useState([])
+  const [services, setservices] = useState([])
   const [q, setQ] = useState("")
   const [category, setCategory] = useState("")
 
   useEffect(() => {
     const params = new URLSearchParams({ q, category })
-    fetch(`/api/offers?${params}`)
+    fetch(`/api/services?${params}`)
       .then((r) => r.json())
-      .then((d) => setOffers(d.offers || []))
+      .then((d) => setservices(d.services || []))
   }, [q, category])
 
   return (
@@ -40,7 +40,7 @@ export default function ServiceListSection() {
 
       {/* لیست کارت‌ها */}
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {offers.map((o) => (
+        {services.map((o) => (
           <div
             key={o.id}
             className="border rounded p-4 shadow hover:shadow-lg transition"

@@ -8,7 +8,7 @@ import Footer from "@/components/Footer"
 import HeroBanner from "@/components/HeroBanner"
 import TestimonialSlider from "@/components/TestimonialSlider"
 import HeadersTam from "@/components/HeaderTam"
-import OfferList from "@/components/OfferList"
+import OfferList from "@/components/ServiceList"
 
 import ChatSheet from "@/components/ChatSheet"
 

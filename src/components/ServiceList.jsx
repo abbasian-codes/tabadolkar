@@ -2,31 +2,31 @@
 import { useEffect, useState } from "react"
 import { supabase } from "@/lib/supabase"
 
-export default function OfferList({ onRequest }) {
-  const [offers, setOffers] = useState([])
+export default function ServiceList({ onRequest }) {
+  const [service, setService] = useState([])
 
   useEffect(() => {
     supabase
-      .from("offers")
+      .from("services")
       .select("*")
       .order("created_at", { ascending: false })
       .range(0, 19)
-      .then(({ data }) => setOffers(data ?? []))
+      .then(({ data }) => setService(data ?? []))
   }, [])
 
   return (
     <section className="p-4">
       <h2 className="text-2xl font-bold mb-4">آخرین پیشنهادها</h2>
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {offers.map((offer) => (
-          <div key={offer.id} className="border rounded p-4 shadow">
-            <h3 className="font-bold text-lg">{offer.title}</h3>
-            <p className="text-sm my-2">{offer.description}</p>
-            <p className="text-sky-600 font-semibold">{offer.price} تومان</p>
+        {service.map((service) => (
+          <div key={service.id} className="border rounded p-4 shadow">
+            <h3 className="font-bold text-lg">{service.title}</h3>
+            <p className="text-sm my-2">{service.description}</p>
+            <p className="text-sky-600 font-semibold">{service.price} تومان</p>
             <button
               onClick={() => {
-                console.log("offer.id =", offer.id)
-                onRequest(offer.id)
+                console.log("service.id =", service.id)
+                onRequest(service.id)
               }}
               className="text-xs underline mt-2 cursor-pointer hover:text-sky-800"
             >
