@@ -1,3 +1,4 @@
+"use client"
 import { useState } from "react"
 import Header from "@/components/Header"
 import Hero from "@/components/Hero"
@@ -8,24 +9,55 @@ import Footer from "@/components/Footer"
 import HeroBanner from "@/components/HeroBanner"
 import TestimonialSlider from "@/components/TestimonialSlider"
 import HeadersTam from "@/components/HeaderTam"
-import OfferList from "@/components/ServiceList"
-
+import ServiceList from "@/components/ServiceList"
 import ChatSheet from "@/components/ChatSheet"
 
 export default function Home() {
   const [chatOfferId, setChatOfferId] = useState(null)
+  const [searchTerm, setSearchTerm] = useState("")
+  const [category, setCategory] = useState("همه")
 
   return (
-    <main className="min-h-screen bg-white font-vazir p-6">
-      <OfferList onRequest={setChatOfferId} />
+    <main className="min-h-screen bg-white font-vazir pt-16 ">
+      {/* 🔍 سرچ */}
+      <div className="m-5"></div>
+      <input
+        type="text"
+        placeholder="جستجو..."
+        className="border p-3  w-full mb-4 "
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+      />
 
+      {/* 🧩 دسته‌بندی */}
+      <select
+        className="border p-2 mb-6"
+        value={category}
+        onChange={(e) => setCategory(e.target.value)}
+      >
+        <option value="همه">همه</option>
+        <option value="طراحی">طراحی</option>
+        <option value="برنامه‌نویسی">برنامه‌نویسی</option>
+        <option value="ترجمه">ترجمه</option>
+        {/* 👈 بقیه دسته‌ها رو اینجا اضافه کن */}
+      </select>
+
+      {/* 🗂 لیست سرویس‌ها */}
+      <ServiceList
+        searchTerm={searchTerm}
+        category={category}
+        onRequest={() => {}}
+      />
+
+      {/* 💬 چت */}
       <ChatSheet
         offerId={chatOfferId}
         open={!!chatOfferId}
         onOpenChange={(open) => !open && setChatOfferId(null)}
       />
-      <Header />
 
+      {/* 🧱 بقیه بخش‌های صفحه */}
+      <Header searchTerm={searchTerm} onSearchChange={setSearchTerm} />
       <Hero />
       <ServiceCTA />
       <HeadersTam />
@@ -33,34 +65,9 @@ export default function Home() {
       <TestimonialSlider />
       <TrustSection />
       <HeroBanner />
-
       <Footer />
 
       <div className="h-11 bg-neutral-300"></div>
     </main>
   )
 }
-
-// export async function getServerSideProps(context) {
-//   const serverDate = new Date().toISOString() // از سمت سرور تاریخ را به‌صورت ISO فرمت کن
-
-//   return {
-//     props: {
-//       serverDate,
-//     },
-//   }
-// }
-
-// import { useEffect } from "react"
-// import supabase from "../utils/supabase"
-
-// export default function HomePage() {
-//   useEffect(() => {
-//     supabase.auth.getSession().then(({ data, error }) => {
-//       console.log("SESSION DATA:", data)
-//       console.log("SESSION ERROR:", error)
-//     })
-//   }, [])
-
-//   return <div>سلام هستی 👋</div>
-// }
