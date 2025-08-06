@@ -1,6 +1,7 @@
 "use client"
 import { useEffect, useState } from "react"
 import { supabase } from "@/lib/supabase"
+import Link from "next/link"
 
 export default function ServiceList({ onRequest, searchTerm, category }) {
   const [services, setServices] = useState([])
@@ -10,7 +11,7 @@ export default function ServiceList({ onRequest, searchTerm, category }) {
   const [error, setError] = useState(null)
 
   const itemsPerPage = 6
-  // این تابع برای گرفتن داده‌ها با فیلتر و صفحه بندی است
+
   useEffect(() => {
     const fetchServices = async () => {
       setLoading(true)
@@ -46,16 +47,29 @@ export default function ServiceList({ onRequest, searchTerm, category }) {
     }
 
     fetchServices()
-  }, [searchTerm, category, currentPage]) // توجه: currentPage اینجا هست
-  // این useEffect ریست کردن صفحه به 1 وقتی سرچ یا دسته تغییر می‌کنه
+  }, [searchTerm, category, currentPage])
+
+  // ریست صفحه به 1 هنگام تغییر فیلتر یا جستجو
   useEffect(() => {
     setCurrentPage(1)
   }, [searchTerm, category])
+
+  // اسکرول به بالا هنگام تغییر صفحه
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" })
+  }, [currentPage])
 
   const totalPages = Math.ceil(totalCount / itemsPerPage)
 
   return (
     <section className="p-4 pt-20 max-w-5xl mx-auto">
+      {/* لینک ثبت پیشنهاد جدید */}
+      <div className="mb-6 text-right">
+        <Link href="/create-service" className="btn btn-primary">
+          ثبت پیشنهاد جدید
+        </Link>
+      </div>
+
       <h2 className="text-2xl font-bold mb-4">
         {searchTerm
           ? `نتایج جستجوی شما برای "${searchTerm}"`
@@ -134,7 +148,9 @@ export default function ServiceList({ onRequest, searchTerm, category }) {
                 onClick={() =>
                   setCurrentPage((prev) => Math.min(prev + 1, totalPages))
                 }
-                disabled={currentPage === totalPages}
+                disabled={
+                  currentPage === totalPages || services.length < itemsPerPage
+                }
                 className="px-3 py-1 rounded border bg-gray-100 hover:bg-gray-200 disabled:opacity-50"
               >
                 بعدی
