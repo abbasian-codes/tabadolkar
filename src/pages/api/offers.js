@@ -9,7 +9,7 @@
 //   const to = from + limit - 1
 
 //   let query = supabase
-//     .from("offers")
+//     .from("services")
 //     .select(
 //       "id, title, description, category, price, duration, tags, created_at",
 //       { count: "exact" }
@@ -24,7 +24,7 @@
 //   const { data, error, count } = await query
 
 //   if (error) return res.status(400).json({ error: error.message })
-//   res.status(200).json({ offers: data, total: count })
+//   res.status(200).json({ services: data, total: count })
 // }
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs"
 
@@ -36,12 +36,12 @@ export default async function handler(req, res) {
     const to = from + limit - 1
 
     const { data, error, count } = await supabase
-      .from("offers")
+      .from("services")
       .select("*", { count: "exact" })
       .range(from, to)
 
     if (error) throw error
-    return res.status(200).json({ offers: data, total: count })
+    return res.status(200).json({ services: data, total: count })
   } catch (e) {
     console.error(e) // ← خطا در ترمینال را بخوان
     return res.status(500).json({ error: e.message })
